@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
+
 import pytest
-from httpx import AsyncClient, Response
+from httpx import AsyncClient, Response, Timeout
 
 from utils import remove_tc
 
@@ -9,7 +10,7 @@ from utils import remove_tc
 async def test_simple_request(async_client: AsyncClient) -> None:
     # ensure tc is removed
     remove_tc()
-    
+
     response: Response = await async_client.get("/")
     assert response.status_code == 200
 
@@ -19,7 +20,7 @@ async def test_longrun_request(async_client: AsyncClient) -> None:
     # ensure tc is removed
     remove_tc()
 
-    async_client.timeout = 2
+    async_client.timeout = Timeout(timeout=2)
     start = datetime.now()
     response: Response = await async_client.get("/longrun")
     end = datetime.now()
